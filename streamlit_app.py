@@ -24,10 +24,7 @@ data_uji = [
         "Hasil Positif": "Warna biru tua berubah menjadi endapan merah bata.",
         "Warna/Visual": "🔴 Endapan Merah Bata",
         "Reaksi Kimia": "R-CHO + 2Cu2+ + 5OH- --> R-COO- + Cu2O (s) + 3H2O",
-        "Link Foto": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Fehling_test_positive_negative.jpg"
-    }
-]
-
+        "Link Foto": "https://www.google.com/imgres?q=FOTO%20UJI%20POSITIF%20UJI%20FEHLING&imgurl=https%3A%2F%2Fcdn1.byjus.com%2Fwp-content%2Fuploads%2F2020%2F09%2FFehling-Test-1-700x327.png&imgrefurl=https%3A%2F%2Fwarstek.com%2Fpengujian-karbohidrat%2F&docid=qIwyAiwyEx-koM&tbnid=B6RxMjYymujbTM&vet=12ahUKEwjqlMvxtc2UAxXpumMGHatDHakQnPAOegQIFRAB..i&w=700&h=327&hcb=2&ved=2ahUKEwjqlMvxtc2UAxXpumMGHatDHakQnPAOegQIFRAB"
 df = pd.DataFrame(data_uji)
 
 st.title("🧪 ChemQual v1.0")
