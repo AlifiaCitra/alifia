@@ -78,9 +78,14 @@ st.divider()
 
 # 4. Membuat Menu Navigasi dengan Tabs
 tab1, tab2 = st.tabs(["🔍 Pencarian & Filter", "📚 Semua Daftar Uji"])
-
 with tab1:
     st.markdown("### Cari Berdasarkan Parameter")
+    
+    # 1. BUAT VARIABEL KOSONG TERLEBIH DAHULU (Agar tidak NameError)
+    search_gugus = "Semua Gugus"
+    search_name = ""
+    
+    # 2. MEMBUAT KOLOM TAMPILAN
     col1, col2 = st.columns(2)
     
     with col1:
@@ -90,33 +95,31 @@ with tab1:
         )
     
     with col2:
-        search_nama = st.text_input("Atau ketik nama uji / reagen (contoh: Tollens, FeCl3):")
+        search_name = st.text_input("Atau ketik nama uji / reagen (contoh: Tollens, FeCl3):")
 
-    # Logika Filter Data
-    # Pastikan nama variabelnya sama persis: search_gugus dan search_name
-filtered_df = df.copy()
+    # 3. LOGIKA FILTER (Sekarang pasti aman karena variabel sudah terdefinisi di atas)
+    filtered_df = df.copy()
+    
+    if search_gugus != "Semua Gugus":
+        filtered_df = filtered_df[filtered_df["Gugus Fungsi"] == search_gugus]
+        
+    if search_name:
+        filtered_df = filtered_df[
+            filtered_df["Nama Uji"].str.contains(search_name, case=False) | 
+            filtered_df["Reagen"].str.contains(search_name, case=False)
+        ]
 
-if search_gugus != "Semua Gugus":
-    filtered_df = filtered_df[filtered_df["Gugus Fungsi"] == search_gugus]
-
-# Menggunakan 'search_name' yang sudah didefinisikan di col2 tadi
-if search_name:
-    filtered_df = filtered_df[
-        filtered_df["Nama Uji"].str.contains(search_name, case=False) | 
-        filtered_df["Reagen"].str.contains(search_name, case=False)
-    ]
-
-# Menampilkan Hasil Filter dalam bentuk Card yang rapi
-if filtered_df.empty:
-    st.warning("Uji kualitatif tidak ditemukan. Coba kata kunci lain!")
-else:
-    for index, row in filtered_df.iterrows():
-        with st.expander(f"🔹 {row['Nama Uji']} — Target: {row['Gugus Fungsi']}", expanded=True):
-            c1, c2 = st.columns([2, 1])
-            with c1:
-                st.markdown(f"**🔬 Reagen:** {row['Reagen']}")
-                st.markdown(f"**📝 Prosedur:** {row['Prosedur Singkat']}")
-                st.markdown(f"**⚗️ Persamaan Reaksi:** `{row['Reaksi Kimia']}`")
-            with c2:
-                st.info(f"**💡 Hasil Positif:**\n{row['Hasil Positif']}")
-                st.success(f"**👁️ Pengamatan Visual:**\n{row['Warna/Visual']}")
+    # 4. MENAMPILKAN DATA
+    if filtered_df.empty:
+        st.warning("Uji kualitatif tidak ditemukan. Coba kata kunci lain!")
+    else:
+        for index, row in filtered_df.iterrows():
+            with st.expander(f"🔹 {row['Nama Uji']} — Target: {row['Gugus Fungsi']}", expanded=True):
+                c1, c2 = st.columns([2, 1])
+                with c1:
+                    st.markdown(f"**🔬 Reagen:** {row['Reagen']}")
+                    st.markdown(f"**📝 Prosedur:** {row['Prosedur Singkat']}")
+                    st.markdown(f"**⚗️ Persamaan Reaksi:** `{row['Reaksi Kimia']}`")
+                with c2:
+                    st.info(f"**💡 Hasil Positif:**\n{row['Hasil Positif']}")
+                    st.success(f"**👁️ Pengamatan Visual:**\n{row['Warna/Visual']}")
