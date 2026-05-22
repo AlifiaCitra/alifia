@@ -7,12 +7,6 @@ st.write(
 st.title("Haii")
 st.title("_SEMANGATT_ YAA :blue[SAYANG] :sunglasses:")
 
-**2. app.py**
-    Ini adalah jantung aplikasimu. Buka file ini di teks editor (seperti VS Code atau Notepad) lalu *copy-paste* kode awal ini:
-
-    ```python
-    import streamlit as st
-    import pandas as pd
 
     # Konfigurasi Halaman
     st.set_page_config(page_title="Katalog Uji Organik", page_icon="🧪")
