@@ -1,82 +1,118 @@
 import streamlit as st
 import time
 
-# 1. Konfigurasi Halaman Game
-st.set_page_config(page_title="Unreal Chemist 2D", page_icon="⚗️", layout="wide")
+# Konfigurasi Halaman Game
+st.set_page_config(page_title="Unreal Chemist 2D", page_icon="⚗️", layout="centered")
 
-st.title("⚗️ Unreal Chemist - Edisi Visual Lab")
-st.write("Visualisasikan eksperimen ujimu langsung dengan foto hasil laboratorium asli!")
+st.title("⚗️ Unreal Chemist - Edisi Lab Maya")
+st.write("Simulator lab kimia organik interaktif. Campurkan zat, atur suhu, dan lihat reaksinya!")
 st.divider()
 
-# Buat layout 2 kolom besar: Kiri untuk kontrol/rak meja lab, Kanan untuk Rak Hasil Tabung
-col_kontrol, col_canvas = st.columns([1, 1.2])
+# 1. INPUT EKSPERIMEN
+st.subheader("1. Siapkan Alat & Bahan")
+sampel = st.radio(
+    "Pilih Senyawa Organik (Sampel):",
+    ["Kosong", "Formaldehida (Aldehida)", "Aseton (Keton)", "Fenol"],
+    horizontal=True
+)
 
-with col_kontrol:
-    st.markdown("### 🎛️ Meja Kerja Laboratorium")
-    
-    # LANGKAH 1: PILIH SAMPEL CAIRAN MISTERIUS
-    sampel = st.selectbox(
-        "1. Tuangkan Sampel Organik ke Tabung Reaksi:",
-        ["-- Pilih Sampel di Meja --", "Sampel Cairan A (Aldehida)", "Sampel Cairan B (Fenol)", "Sampel Cairan C (Keton)"]
-    )
-    
-    # LANGKAH 2: PILIH REAGEN DARI RAK (Pake radio biar keliatan semua opsinya)
-    st.markdown("**2. Pilih Botol Reagen Pengetes:**")
-    reagen = st.radio(
-        "Pilih salah satu reagen di bawah:",
-        ["Belum Memilih", "Reagen Tollens (AgNO3 + Basa)", "Larutan FeCl3 (Besi Klorida)"],
-        index=0
-    )
-    
-    # LANGKAH 3: KONTROL PEMANAS (BUNSEN)
-    st.markdown("**3. Pengaturan Suhu Kamar/Pemanas:**")
-    suhu = st.select_slider(
-        "Atur kondisi Bunsen:",
-        options=["Suhu Kamar (25°C)", "Pemanasan Hangat (50°C)", "Pemanasan Kuat (80°C)"]
-    )
-    
-    st.divider()
-    
-    # TOMBOL UTAMA UNTUK MENCAMPURKAN
-    mulai_reaksi = st.button("🧪 CAMPURKAN & REAKSIKAN ZAT!", use_container_width=True)
+reagen = st.selectbox(
+    "Pilih Reagen Uji:",
+    ["-- Pilih Reagen --", "Pereaksi Fehling (Biru)", "Pereaksi Tollens (Bening)", "Larutan FeCl3 (Kuning)"]
+)
 
-# 2. SEKSI KANAN: CANVAS VISUAL GAME (Tempat tabung reaksi berada)
-with col_canvas:
-    st.markdown("### 🔬 Tampilan Tabung Reaksi")
+suhu = st.slider("Atur Suhu Pemanas Bunsen (°C):", min_value=25, max_value=100, value=25, step=5)
+
+st.divider()
+
+# 2. PROSES REAKSI GAME
+if sampel != "Kosong" and reagen != "-- Pilih Reagen --":
+    st.subheader("2. Jalankan Eksperimen")
     
-    # Jika tombol belum diklik, tampilkan tabung reaksi kosong/bening biasa
-    if not mulai_reaksi or sampel == "-- Pilih Sampel di Meja --" or reagen == "Belum Memilih":
-        st.info("Silakan tentukan Sampel, Reagen, dan Suhu di sebelah kiri, lalu klik tombol **CAMPURKAN** untuk melihat perubahan kimia!")
-        # Foto default tabung reaksi laboratorium bening/kosong
-        st.image("https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=400", caption="Tabung Reaksi Siap Digunakan", width=350)
+    if st.button("🧪 TUANGKAN REAGEN & REAKSIKAN!", use_container_width=True):
         
-    else:
-        # JALANKAN ANIMASI PROSES GAME
-        with st.spinner("⏳ Menuangkan reagen... Mengocok tabung..."):
-            time.sleep(1.5) # Jeda animasi biar dramatis
-            
-        st.success("✨ Reaksi Selesai! Berikut perubahan visual zat:")
-        
-        # LOGIKA DIAGNOSIS GAME & MEMANGGIL FOTO ASLI NYATA
-        # Kasus 1: Aldehida + Tollens + Panas Kuat -> Cermin Perak
-        if "Aldehida" in sampel and "Tollens" in reagen:
-            if "80°C" in suhu:
-                st.markdown("#### 🔴 Hasil: POSITIF (Terbentuk Cermin Perak)")
-                st.image("https://upload.wikimedia.org/wikipedia/commons/d/df/Tollens_test.jpg", caption="Foto Asli Hasil Uji Tollens Positif", width=400)
-                st.info("💡 **Analisis:** Gugus Aldehida mereduksi kompleks perak menjadi logam perak mendidih yang menempel mengkilap di dinding tabung seperti cermin.")
+        # Animasi Loading
+        status = st.empty()
+        bar = st.progress(0)
+        for p in range(100):
+            time.sleep(0.01)
+            bar.progress(p + 1)
+            if p < 50:
+                status.text("💧 Meneteskan reagen ke tabung...")
             else:
-                st.markdown("#### 🟡 Hasil: NEGATIF / BELUM SEMPURNA")
-                st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Silver_nitrate_solution.jpg/640px-Silver_nitrate_solution.jpg", caption="Larutan Tetap Bening Kekuningan", width=400)
-                st.warning("⚠️ **Petunjuk Game:** Reaksi Tollens membutuhkan **Pemanasan Kuat (80°C)** untuk memicu pengendapan perak. Coba naikkan suhu bunsenmu!")
+                status.text("🔄 Mengguncang tabung reaksi...")
+        status.text("✨ Reaksi Selesai!")
+        
+        # Logika Hasil Perubahan Warna
+        warna_akhir = "#FFFFFF"  # Default Bening
+        emoji = "💧"
+        catatan = "Tidak ada perubahan visual yang teramati (Reaksi Negatif)."
+        is_pos = False
 
-        # Kasus 2: Fenol + FeCl3 -> Ungu Pekat (Bisa di semua suhu)
+        # Kondisi 1: Aldehida + Fehling
+        if "Formaldehida" in sampel and "Fehling" in reagen:
+            if suhu >= 60:
+                warna_akhir = "#B22222" # Merah Bata
+                emoji = "🔴"
+                catatan = "Positif! Gugus Aldehida mereduksi ion Cu2+ menjadi endapan Cu2O merah bata."
+                is_pos = True
+            else:
+                warna_akhir = "#0000FF" # Tetap Biru
+                emoji = "🔵"
+                catatan = "Negatif. Uji Fehling membutuhkan pemanasan (>60°C) untuk membentuk endapan."
+
+        # Kondisi 2: Aldehida + Tollens
+        elif "Formaldehida" in sampel and "Tollens" in reagen:
+            if suhu >= 60:
+                warna_akhir = "#D3D3D3" # Cermin Perak
+                emoji = "🪞"
+                catatan = "Positif! Terbentuk lapisan cermin perak mengkilap di dinding tabung."
+                is_pos = True
+            else:
+                warna_akhir = "#F5F5F5"
+                emoji = "⚪"
+                catatan = "Reaksi berjalan lambat. Naikkan suhu Bunsen untuk memicu endapan cermin perak."
+
+        # Kondisi 3: Fenol + FeCl3
         elif "Fenol" in sampel and "FeCl3" in reagen:
-            st.markdown("#### 🔴 Hasil: POSITIF (Terbentuk Kompleks Ungu)")
-            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Iron%28III%29_salicylate_complex.jpg/640px-Iron%28III%29_salicylate_complex.jpg", caption="Foto Asli Hasil Uji FeCl3 Positif", width=400)
-            st.info("💡 **Analisis:** Ion Besi(III) langsung mengikat gugus hidroksil pada cincin fenol, menciptakan kompleks warna ungu gelap seketika.")
+            warna_akhir = "#4B0082" # Ungu Pekat
+            emoji = "🟣"
+            catatan = "Positif! Ion Fe3+ langsung membentuk senyawa kompleks berwarna ungu pekat dengan Fenol."
+            is_pos = True
 
-        # Kasus 3: Keton + Tollens atau FeCl3 -> Tetap Negatif/Bening
-        elif "Keton" in sampel:
-            st.markdown("#### ⚪ Hasil: NEGATIF (Tidak Ada Reaksi)")
-            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Silver_nitrate_solution.jpg/640px-Silver_nitrate_solution.jpg", caption="Larutan Tidak Berubah Warna", width=400)
-            st.error("
+        # Kondisi 4: Keton (Aseton) -> Selalu Negatif
+        elif "Aseton" in sampel:
+            warna_akhir = "#F0F2F6"
+            emoji = "⚪"
+            catatan = "Negatif. Senyawa Keton (Aseton) tidak dapat dioksidasi oleh reagen Tollens atau Fehling."
+
+        # TAMPILAN GRAFIS VISUAL
+        st.divider()
+        col1, col2 = st.columns([1, 2])
+        
+        with col1:
+            # Menggambar bentuk tabung reaksi otomatis warna dinamis
+            st.markdown(f"""
+            <div style="
+                background: linear-gradient(to bottom, rgba(255,255,255,0.1) 20%, {warna_akhir} 100%);
+                border: 4px solid #E0E0E0;
+                border-bottom-left-radius: 40px;
+                border-bottom-right-radius: 40px;
+                width: 80px; height: 200px; margin: 0 auto;
+                display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px;
+            ">
+                <h2 style="margin: 0;">{emoji}</h2>
+            </div>
+            <p style="text-align: center; font-size: 12px; font-weight: bold; margin-top: 5px;">Tabung Reaksi</p>
+            """, unsafe_allow_html=True)
+            
+        with col2:
+            if is_pos:
+                st.success("### 🎉 Hasil Pengamatan: POSITIF")
+            else:
+                st.error("### 🧪 Hasil Pengamatan: NEGATIF")
+            st.info(catatan)
+            st.metric("Suhu Lab Saat Ini", f"{suhu} °C")
+
+else:
+    st.warning("💡 Silakan tentukan **Sampel** dan **Reagen** di atas terlebih dahulu untuk memulai simulasi!")
