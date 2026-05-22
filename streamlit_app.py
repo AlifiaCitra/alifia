@@ -6,3 +6,4 @@ st.write(
 )
 st.title("Haii")
 st.title("_SEMANGATT_ YAA :blue[SAYANG] :sunglasses:")
+st.text("This is text\n[and more text](that's not a Markdown link).")
