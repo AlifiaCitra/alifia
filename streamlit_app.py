@@ -9,7 +9,7 @@ st.title("_SEMANGATT_ YAA :blue[SAYANG] :sunglasses:")
 
 
     # Konfigurasi Halaman
-    st.set_page_config(page_title="Katalog Uji Organik", page_icon="🧪")
+    
 
     # Data Katalog (Bisa kamu tambah sendiri nanti)
     data = {
